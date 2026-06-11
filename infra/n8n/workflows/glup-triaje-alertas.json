@@ -1,0 +1,379 @@
+{
+  "name": "GLUP — Alertas WhatsApp Triaje Metabólico",
+  "nodes": [
+    {
+      "id": "a1b2c3d4-0001-4000-8000-000000000001",
+      "name": "Recibir Triaje GLUP",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "glup-triaje-v1",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "glup-triaje",
+        "responseMode": "onReceived",
+        "responseCode": "200",
+        "responseData": "",
+        "options": {}
+      },
+      "notes": "Endpoint: POST /webhook/glup-triaje\nEl backend GLUP llama a esta URL desde N8N_WEBHOOK_URL.\nVerifica el header X-GLUP-Secret si usas la validación de secreto."
+    },
+    {
+      "id": "a1b2c3d4-0002-4000-8000-000000000002",
+      "name": "Validar Secreto",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [480, 300],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-secret",
+              "leftValue": "={{ $json.headers['x-glup-secret'] }}",
+              "rightValue": "={{ $env.N8N_GLUP_SECRET }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "notes": "Valida que la llamada provenga del backend GLUP.\nConfigura N8N_GLUP_SECRET en las variables de entorno de n8n con el mismo valor que N8N_WEBHOOK_SECRET en el .env del backend.\nSi no usas secreto, reemplaza este nodo por un nodo No-Op o elimínalo."
+    },
+    {
+      "id": "a1b2c3d4-0003-4000-8000-000000000003",
+      "name": "Ruteo por Semáforo",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [720, 300],
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{ $json.body.semaforo }}",
+        "rules": {
+          "rules": [
+            { "value2": "VERDE",    "output": 0 },
+            { "value2": "AMARILLA", "output": 1 },
+            { "value2": "ROJA",     "output": 2 }
+          ]
+        },
+        "fallbackOutput": 3
+      },
+      "notes": "Bifurca el flujo según el resultado del semáforo.\nOutput 0 → VERDE (candidato)\nOutput 1 → AMARILLA (potencial)\nOutput 2 → ROJA (no candidato)\nOutput 3 → Fallback (valor inesperado)"
+    },
+    {
+      "id": "a1b2c3d4-0004-4000-8000-000000000004",
+      "name": "Mensaje VERDE",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [960, 100],
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "verde-telefono",
+              "name": "telefono",
+              "value": "={{ $json.body.whatsapp }}",
+              "type": "string"
+            },
+            {
+              "id": "verde-nombre",
+              "name": "nombre",
+              "value": "={{ $json.body.nombre }}",
+              "type": "string"
+            },
+            {
+              "id": "verde-semaforo",
+              "name": "semaforo",
+              "value": "VERDE",
+              "type": "string"
+            },
+            {
+              "id": "verde-imc",
+              "name": "imc",
+              "value": "={{ $json.body.imc }}",
+              "type": "number"
+            },
+            {
+              "id": "verde-mensaje",
+              "name": "mensaje",
+              "value": "={{ 'Hola ' + $json.body.nombre + ',\\n\\nTu test metabólico GLUP ha sido evaluado: ERES CANDIDATO al tratamiento GLP-1.\\n\\nTu IMC: ' + $json.body.imc + '\\n\\nUn endocrinólogo certificado por el CMP se comunicará contigo en las próximas 24 horas para:\\n\\n- Confirmar tu candidatura\\n- Agendar tu teleconsulta inicial\\n- Diseñar tu plan de tratamiento personalizado\\n\\n¿Tienes alguna duda? Responde este mensaje y te ayudamos.\\n\\nEquipo GLUP | Salud metabólica en Lima\\nglup.pe' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "a1b2c3d4-0005-4000-8000-000000000005",
+      "name": "Mensaje AMARILLA",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [960, 300],
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "amarilla-telefono",
+              "name": "telefono",
+              "value": "={{ $json.body.whatsapp }}",
+              "type": "string"
+            },
+            {
+              "id": "amarilla-nombre",
+              "name": "nombre",
+              "value": "={{ $json.body.nombre }}",
+              "type": "string"
+            },
+            {
+              "id": "amarilla-semaforo",
+              "name": "semaforo",
+              "value": "AMARILLA",
+              "type": "string"
+            },
+            {
+              "id": "amarilla-imc",
+              "name": "imc",
+              "value": "={{ $json.body.imc }}",
+              "type": "number"
+            },
+            {
+              "id": "amarilla-mensaje",
+              "name": "mensaje",
+              "value": "={{ 'Hola ' + $json.body.nombre + ',\\n\\nTu test metabólico GLUP muestra un perfil de CANDIDATO POTENCIAL para el tratamiento GLP-1.\\n\\nTu IMC: ' + $json.body.imc + '\\n\\nUn médico especialista evaluará tu caso en detalle. Con información adicional podrías calificar para el tratamiento.\\n\\nNuestro equipo te contactará en las próximas 48 horas.\\n\\n¿Tienes alguna duda? Responde este mensaje.\\n\\nEquipo GLUP | Salud metabólica en Lima\\nglup.pe' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "a1b2c3d4-0006-4000-8000-000000000006",
+      "name": "Mensaje ROJA",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [960, 500],
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "roja-telefono",
+              "name": "telefono",
+              "value": "={{ $json.body.whatsapp }}",
+              "type": "string"
+            },
+            {
+              "id": "roja-nombre",
+              "name": "nombre",
+              "value": "={{ $json.body.nombre }}",
+              "type": "string"
+            },
+            {
+              "id": "roja-semaforo",
+              "name": "semaforo",
+              "value": "ROJA",
+              "type": "string"
+            },
+            {
+              "id": "roja-imc",
+              "name": "imc",
+              "value": "={{ $json.body.imc }}",
+              "type": "number"
+            },
+            {
+              "id": "roja-mensaje",
+              "name": "mensaje",
+              "value": "={{ 'Hola ' + $json.body.nombre + ',\\n\\nGracias por completar tu test metabólico en GLUP.\\n\\nTu IMC: ' + $json.body.imc + '\\n\\nEn este momento tu perfil no califica directamente para el tratamiento GLP-1. Esto puede deberse a criterios de seguridad médica importantes para tu bienestar.\\n\\nNuestro equipo puede orientarte sobre otras opciones de salud metabólica disponibles en Lima.\\n\\n¿Quieres recibir más información? Responde este mensaje.\\n\\nEquipo GLUP | Salud metabólica en Lima\\nglup.pe' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "a1b2c3d4-0007-4000-8000-000000000007",
+      "name": "WhatsApp VERDE",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1200, 100],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v20.0/{{ $env.WA_PHONE_NUMBER_ID }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.WA_ACCESS_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"recipient_type\": \"individual\",\n  \"to\": \"{{ $json.telefono }}\",\n  \"type\": \"text\",\n  \"text\": {\n    \"preview_url\": false,\n    \"body\": \"{{ $json.mensaje }}\"\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": false,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "notes": "Meta WhatsApp Cloud API.\nConfigura en n8n > Settings > Variables de entorno:\n  WA_PHONE_NUMBER_ID = tu Phone Number ID de Meta Business\n  WA_ACCESS_TOKEN    = tu token de acceso permanente\n\nAlternativa Twilio: cambia la URL y el body al formato de Twilio Messaging API."
+    },
+    {
+      "id": "a1b2c3d4-0008-4000-8000-000000000008",
+      "name": "WhatsApp AMARILLA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1200, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v20.0/{{ $env.WA_PHONE_NUMBER_ID }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.WA_ACCESS_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"recipient_type\": \"individual\",\n  \"to\": \"{{ $json.telefono }}\",\n  \"type\": \"text\",\n  \"text\": {\n    \"preview_url\": false,\n    \"body\": \"{{ $json.mensaje }}\"\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": false,
+              "responseFormat": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "a1b2c3d4-0009-4000-8000-000000000009",
+      "name": "WhatsApp ROJA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1200, 500],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v20.0/{{ $env.WA_PHONE_NUMBER_ID }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.WA_ACCESS_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"recipient_type\": \"individual\",\n  \"to\": \"{{ $json.telefono }}\",\n  \"type\": \"text\",\n  \"text\": {\n    \"preview_url\": false,\n    \"body\": \"{{ $json.mensaje }}\"\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": false,
+              "responseFormat": "json"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Recibir Triaje GLUP": {
+      "main": [
+        [
+          { "node": "Validar Secreto", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Validar Secreto": {
+      "main": [
+        [
+          { "node": "Ruteo por Semáforo", "type": "main", "index": 0 }
+        ],
+        []
+      ]
+    },
+    "Ruteo por Semáforo": {
+      "main": [
+        [
+          { "node": "Mensaje VERDE",    "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "Mensaje AMARILLA", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "Mensaje ROJA",     "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Mensaje VERDE": {
+      "main": [
+        [
+          { "node": "WhatsApp VERDE", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Mensaje AMARILLA": {
+      "main": [
+        [
+          { "node": "WhatsApp AMARILLA", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Mensaje ROJA": {
+      "main": [
+        [
+          { "node": "WhatsApp ROJA", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "pinData": {},
+  "tags": [
+    { "name": "GLUP" },
+    { "name": "WhatsApp" },
+    { "name": "Triaje" }
+  ],
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "n8nVersion": "1.0.0"
+  }
+}

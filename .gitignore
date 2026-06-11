@@ -74,6 +74,16 @@ secrets/
 certs/
 
 # ============================================================
+# BASE DE DATOS — DATOS SENSIBLES CIFRADOS (Ley 29733)
+# ============================================================
+# El archivo .db contiene datos de pacientes cifrados.
+# NUNCA debe subirse al repositorio.
+apps/backend/data/
+*.db
+*.db-shm
+*.db-wal
+
+# ============================================================
 # TEMPORALES Y MISCELÁNEOS
 # ============================================================
 *.tmp
