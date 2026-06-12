@@ -88,5 +88,7 @@ apps/backend/data/
 # ============================================================
 *.tmp
 *.temp
+# iCloud Drive sync artifacts (Windows)
+*.tmp.*
 .eslintcache
 .stylelintcache

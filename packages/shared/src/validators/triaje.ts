@@ -53,7 +53,6 @@ export const TriajeSchema = z.object({
   /**
    * P7 — CONTRAINDICACIÓN CRÍTICA
    * ¿Tiene diagnóstico activo de trastorno de conducta alimentaria (TCA)?
-   * (Anorexia, bulimia, trastorno por atracón con criterios clínicos)
    */
   p7_tca_activo: z.boolean({
     required_error: 'Debe responder la pregunta 7',
@@ -62,7 +61,7 @@ export const TriajeSchema = z.object({
 
   /**
    * P8 — "Food noise": nivel de intrusividad de pensamientos sobre comida.
-   * Escala 1 (nunca) → 5 (pensamientos constantes que interfieren con el día).
+   * Escala 1 (nunca) → 5 (pensamientos constantes).
    */
   p8_food_noise: z
     .number({ required_error: 'Debe indicar el nivel de food noise', invalid_type_error: 'Debe ser un número del 1 al 5' })
