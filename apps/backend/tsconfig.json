@@ -12,8 +12,7 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@glup/shared": ["../../packages/shared/src/index.ts"],
-      "@glup/shared/*": ["../../packages/shared/src/*"]
+      "@glup/shared": ["../../packages/shared/dist/index"]
     }
   },
   "include": ["src/**/*"],
