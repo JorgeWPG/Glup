@@ -1,0 +1,8 @@
+{
+  "installCommand": "npm ci --workspace=apps/frontend --include-workspace-root",
+  "buildCommand":   "npm run build --workspace=apps/frontend",
+  "outputDirectory": "apps/frontend/dist",
+  "rewrites": [
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ]
+}
