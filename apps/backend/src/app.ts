@@ -9,10 +9,20 @@ const app: Application = express();
 // ── Seguridad de cabeceras HTTP ──────────────────────────────────────────────
 app.use(helmet());
 
-// ── CORS: solo el origen del frontend autorizado ─────────────────────────────
+// ── CORS: orígenes autorizados (prod + dev) ──────────────────────────────────
+const ALLOWED_ORIGINS = [
+  'https://glup.health',
+  'https://www.glup.health',
+  'http://localhost:5173',
+];
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL ?? 'http://localhost:5173',
+    origin: (origin, cb) => {
+      // Permitir requests sin origin (curl, Postman, health checks internos)
+      if (!origin || ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
+      cb(new Error(`CORS: origen no permitido — ${origin}`));
+    },
     methods: ['POST', 'GET'],
     allowedHeaders: ['Content-Type'],
   }),
