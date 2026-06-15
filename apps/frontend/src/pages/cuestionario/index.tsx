@@ -298,7 +298,8 @@ export default function CuestionarioPage() {
     };
 
     try {
-      const res  = await fetch('/api/v1/triaje', {
+      const API_BASE = import.meta.env.VITE_API_URL || 'https://glupbackend-production.up.railway.app';
+      const res  = await fetch(`${API_BASE}/api/v1/triaje`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -511,7 +512,7 @@ export default function CuestionarioPage() {
                 onClick={goNext}
                 disabled={!canProceed()}
               >
-                Continuar <IconArrow />
+                Continuar <span className="btn__arrow"><IconArrow /></span>
               </button>
             )}
             <button type="button" className="btn-back" onClick={goBack}>
@@ -619,7 +620,7 @@ export default function CuestionarioPage() {
 
             <div className="quiz-nav">
               <button type="submit" className="btn btn--primary btn--lg quiz-btn-continue">
-                Ver mi resultado <IconArrow />
+                Ver mi resultado <span className="btn__arrow"><IconArrow /></span>
               </button>
               <button type="button" className="btn-back" onClick={goBack}>
                 <IconBack /> Pregunta anterior
