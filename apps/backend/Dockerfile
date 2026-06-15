@@ -25,6 +25,7 @@ RUN mkdir -p /data
 ENV NODE_ENV=production
 ENV DB_PATH=/data/glup.db
 
-EXPOSE 3001
+# Railway inyecta PORT dinámicamente — no fijar valor aquí
+EXPOSE ${PORT:-3000}
 
 CMD ["node", "apps/backend/dist/server.js"]
