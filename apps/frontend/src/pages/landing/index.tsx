@@ -117,49 +117,96 @@ function Navbar() {
   );
 }
 
+function HeroVisual() {
+  return (
+    <div className="hero-visual">
+      <div className="hero-phone" aria-hidden="true">
+        <div className="phone-topbar">
+          <span className="phone-topbar__brand">GLUP<span>.</span></span>
+          <div className="phone-topbar__dots"><span /><span /><span /></div>
+        </div>
+        <div className="phone-body">
+          <div>
+            <p className="phone-eyebrow">Resultado de tu test</p>
+            <p className="phone-title">Tu Semáforo<br />Metabólico</p>
+          </div>
+          <div className="semaforo">
+            <div className="semaforo__item">
+              <div className="semaforo__light semaforo__light--rojo" />
+              <span className="semaforo__label">Riesgo<br />Alto</span>
+            </div>
+            <div className="semaforo__item">
+              <div className="semaforo__light semaforo__light--amarillo" />
+              <span className="semaforo__label">Perfil<br />Moderado</span>
+            </div>
+            <div className="semaforo__item">
+              <div className="semaforo__light semaforo__light--verde" />
+              <span className="semaforo__label semaforo__label--active">Candidato<br />Ideal</span>
+            </div>
+          </div>
+          <div className="phone-result">
+            <div className="phone-result__left">
+              <div className="phone-result__imc">24.8</div>
+              <div className="phone-result__imc-label">IMC</div>
+            </div>
+            <div className="phone-result__text">
+              <div className="phone-result__label">Candidato ideal para tratamiento GLP-1</div>
+              <div className="phone-result__sub">Un médico CMP te contacta hoy</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function HeroSection() {
   return (
     <section className="hero" aria-labelledby="hero-heading">
-      <div className="container hero__inner">
+      <div className="container hero__grid">
 
-        <div>
-          <span className="badge badge--verde">Nuevo en Lima — Tratamiento GLP-1</span>
+        {/* ── Columna izquierda ── */}
+        <div className="hero__left">
+          <div>
+            <span className="badge badge--verde">Nuevo en Lima — Tratamiento GLP-1</span>
+          </div>
+          <h1 id="hero-heading" className="hero__title">
+            El ruido mental de la comida<br />
+            <span className="accent-gradient">tiene solución médica.</span>
+          </h1>
+          <p className="hero__subtitle">
+            Conectamos pacientes en Lima con endocrinólogos certificados CMP para
+            tratamientos metabólicos GLP-1 personalizados. Test gratuito, teleconsulta
+            y despacho con cadena de frío a domicilio.
+          </p>
+          <ul className="hero__seals" aria-label="Certificaciones y avales">
+            <li className="seal">
+              <span className="seal__icon"><IconCheck /></span>
+              <span>Médicos registrados <strong>CMP</strong></span>
+            </li>
+            <li className="seal">
+              <span className="seal__icon"><IconCheck /></span>
+              <span>Productos autorizados <strong>DIGEMID</strong></span>
+            </li>
+            <li className="seal">
+              <span className="seal__icon"><IconLock /></span>
+              <span>Datos protegidos <strong>Ley 29733</strong></span>
+            </li>
+          </ul>
+          <div className="hero__cta">
+            <a href="/cuestionario" className="btn btn--primary btn--lg">
+              Hacer mi test gratuito
+              <span className="btn__arrow"><IconArrow /></span>
+            </a>
+            <p className="hero__note">
+              <strong>Sin registro</strong> · Solo 3 minutos · Resultado inmediato
+            </p>
+          </div>
         </div>
 
-        <h1 id="hero-heading" className="hero__title">
-          El ruido mental de la comida<br />
-          <span className="accent-gradient">tiene solución médica.</span>
-        </h1>
-
-        <p className="hero__subtitle">
-          Conectamos pacientes en Lima con endocrinólogos certificados CMP para
-          tratamientos metabólicos GLP-1 personalizados. Test gratuito, teleconsulta
-          y despacho con cadena de frío a domicilio.
-        </p>
-
-        <ul className="hero__seals" aria-label="Certificaciones y avales">
-          <li className="seal">
-            <span className="seal__icon"><IconCheck /></span>
-            <span>Médicos registrados <strong>CMP</strong></span>
-          </li>
-          <li className="seal">
-            <span className="seal__icon"><IconCheck /></span>
-            <span>Productos autorizados <strong>DIGEMID</strong></span>
-          </li>
-          <li className="seal">
-            <span className="seal__icon"><IconLock /></span>
-            <span>Datos protegidos <strong>Ley 29733</strong></span>
-          </li>
-        </ul>
-
-        <div className="hero__cta">
-          <a href="/cuestionario" className="btn btn--primary btn--lg">
-            Hacer mi test gratuito
-            <IconArrow />
-          </a>
-          <p className="hero__note">
-            <strong>Sin registro</strong> · Solo 3 minutos · Resultado inmediato
-          </p>
+        {/* ── Columna derecha — solo desktop ── */}
+        <div className="hero__right">
+          <HeroVisual />
         </div>
 
       </div>
@@ -243,7 +290,7 @@ function ComoFuncionaSection() {
         <div className="steps__cta">
           <a href="/cuestionario" className="btn btn--primary btn--lg">
             Comenzar ahora — es gratis
-            <IconArrow />
+            <span className="btn__arrow"><IconArrow /></span>
           </a>
         </div>
 

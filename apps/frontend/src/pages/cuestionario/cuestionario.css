@@ -66,6 +66,10 @@
   from { opacity: 0; transform: translateX(16px); }
   to   { opacity: 1; transform: translateX(0); }
 }
+@keyframes selectBounce {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.03); }
+}
 
 .quiz-block-label {
   font-size: var(--text-xs);
@@ -120,13 +124,15 @@
 .choice-btn--selected {
   border-color: var(--verde);
   background: var(--verde-light);
-  box-shadow: 0 4px 16px rgba(0, 230, 118, 0.15);
+  box-shadow: var(--verde-glow);
+  animation: selectBounce 280ms ease both;
 }
 .choice-btn--selected .choice-btn__icon { color: #006830; }
 .choice-btn--no.choice-btn--selected {
   border-color: var(--electrico);
   background: rgba(124, 58, 237, 0.07);
-  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.12);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.18), 0 6px 28px rgba(124, 58, 237, 0.16);
+  animation: selectBounce 280ms ease both;
 }
 .choice-btn--no.choice-btn--selected .choice-btn__icon { color: var(--electrico); }
 
@@ -151,7 +157,7 @@
 }
 .option-btn:hover { border-color: var(--electrico); background: var(--blanco); }
 .option-btn:focus-visible { outline: 3px solid var(--verde); outline-offset: 2px; }
-.option-btn--selected { border-color: var(--verde); background: var(--verde-light); box-shadow: 0 2px 12px rgba(0,230,118,0.12); }
+.option-btn--selected { border-color: var(--verde); background: var(--verde-light); box-shadow: var(--verde-glow); animation: selectBounce 280ms ease both; }
 .option-check {
   width: 20px; height: 20px; flex-shrink: 0;
   border-radius: var(--r-full);
@@ -183,7 +189,7 @@
 }
 .scale-btn:hover { border-color: var(--electrico); transform: translateY(-2px); }
 .scale-btn:focus-visible { outline: 3px solid var(--verde); outline-offset: 2px; }
-.scale-btn--selected { border-color: var(--verde); background: var(--verde-light); transform: translateY(-3px); box-shadow: 0 4px 16px rgba(0,230,118,0.15); }
+.scale-btn--selected { border-color: var(--verde); background: var(--verde-light); transform: translateY(-3px); box-shadow: var(--verde-glow); animation: selectBounce 280ms ease both; }
 .scale-btn__number { font-size: var(--text-2xl); font-weight: 800; color: var(--text); line-height: 1; }
 .scale-btn--selected .scale-btn__number { color: #006830; }
 .scale-btn__label { font-size: 0.62rem; color: var(--text-muted); text-align: center; line-height: 1.3; }
