@@ -50,7 +50,7 @@ export default function LegalLayout({
               Av. Javier Prado Este Nro. 7255 Dpto. 201, Urb. Mayorazgo, Ate, Lima<br />
               <a href="mailto:hola@glup.health" style={{ color: 'inherit' }}>hola@glup.health</a>
               {' '}·{' '}
-              <a href="tel:+51916583423" style={{ color: 'inherit' }}>+51 916 583 423</a>
+              <a href="tel:+51923544630" style={{ color: 'inherit' }}>+51 923 544 630</a>
             </p>
             <nav className="legal-footer-links" aria-label="Documentos legales">
               <a href="/privacidad">Aviso de Privacidad</a>

@@ -390,7 +390,7 @@ function FooterSection() {
         </p>
 
         <div className="footer__bottom">
-          <span>© {year} GLUP SAC — Lima, Perú</span>
+          <span>© {year} JAPG S.A.C. — Lima, Perú</span>
           <span>Todos los derechos reservados</span>
         </div>
 

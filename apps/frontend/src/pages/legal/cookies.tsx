@@ -304,8 +304,8 @@ export default function CookiesPage() {
           </li>
           <li>
             <strong>Teléfono:</strong>{' '}
-            <a href="tel:+51916583423" style={{ color: 'var(--electrico)' }}>
-              +51 916 583 423
+            <a href="tel:+51923544630" style={{ color: 'var(--electrico)' }}>
+              +51 923 544 630
             </a>
           </li>
           <li>
